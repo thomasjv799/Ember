@@ -1,144 +1,287 @@
-# Ember
+Ember
 
-**Private health intelligence.** Ember reads your Apple Health data and produces daily
-suggestions, a weekly status report, metric drill-downs, and a conversational assistant —
-all powered by a **Gemma 3n** model running **entirely on-device**. No cloud, no account,
-nothing leaves your iPhone.
+Private health intelligence for iPhone.
 
-A native SwiftUI reproduction of a high-fidelity design prototype, wired to real **HealthKit**
-reads and a **Gemma-ready** on-device LLM layer. Dark, warm near-black premium theme.
+Ember reads your Apple Health data and turns it into actionable insights, daily recommendations, weekly health summaries, and natural-language conversations — all powered by a Gemma 3n model running entirely on-device.
+
+🔒 100% private • 📱 Runs locally on your iPhone • ❤️ Apple Health integration • 🎙️ Voice-enabled assistant • ☁️ No cloud required
+
+No accounts. No subscriptions. No health data leaves your device.
+
+A native SwiftUI application inspired by a high-fidelity design prototype, connected to real HealthKit data and a Gemma-ready on-device AI stack. Designed with a premium warm dark theme optimized for daily use.
 
 <p>
   <em>Today · Weekly · Insights · Ask · Settings — plus Onboarding and a reusable metric Detail view.</em>
 </p>
 
----
+Screenshots
 
-## Requirements
+<p align="center">
+  <img src="docs/screenshots/today.png" width="180" alt="Today Screen">
+  <img src="docs/screenshots/weekly.png" width="180" alt="Weekly Report">
+  <img src="docs/screenshots/insights.png" width="180" alt="Insights">
+  <img src="docs/screenshots/ask.png" width="180" alt="Ask Ember">
+  <img src="docs/screenshots/settings.png" width="180" alt="Settings">
+</p>
+<p align="center">
+  <sub>Today • Weekly Report • Insights • Ask Ember • Settings</sub>
+</p>
 
-- **Xcode 16 or later** (built and verified against Xcode 26.5, iOS 26.5 simulator SDK).
-- **iOS 17.0+** deployment target. iPhone only, portrait.
-- A Mac. A free Apple ID is enough to run on your own device (see below).
+⸻
 
-## Quick start (simulator)
+Features
 
-```bash
-open Ember.xcodeproj      # then press ⌘R, or:
+Daily Health Briefing
 
+Get a concise daily summary of your health metrics, trends, and recommended actions based on your Apple Health data.
+
+Weekly Health Reports
+
+Track progress over time with automatically generated weekly reports covering activity, recovery, sleep, and other key metrics.
+
+Health Insights
+
+Dive deeper into trends and individual health metrics through reusable drill-down views and detailed visualizations.
+
+AI Health Assistant
+
+Ask questions about your health data using natural language. The assistant can explain trends, summarize metrics, and provide context-aware guidance.
+
+Voice Interaction
+
+Speak naturally to Ember using on-device speech recognition and conversational AI.
+
+Privacy First
+
+All processing happens locally on your device. No cloud inference, external APIs, analytics pipelines, or user accounts.
+
+⸻
+
+Requirements
+
+* Xcode 16 or later (built and verified against Xcode 26.5, iOS 26.5 simulator SDK)
+* iOS 17.0+
+* iPhone only (portrait orientation)
+* macOS with Xcode installed
+
+A free Apple ID is sufficient to run Ember on your personal device.
+
+⸻
+
+Quick Start (Simulator)
+
+open Ember.xcodeproj
+# or
 xcodebuild -project Ember.xcodeproj -scheme Ember \
-  -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' \
+  -sdk iphonesimulator \
+  -destination 'generic/platform=iOS Simulator' \
   CODE_SIGNING_ALLOWED=NO build
-```
 
-> If `xcodebuild` can't find the iOS SDK, your `xcode-select` may still point at the
-> Command Line Tools. Either run `sudo xcode-select -s /Applications/Xcode.app` once, or
-> prefix commands with `DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer`.
+If xcodebuild cannot find the iOS SDK, Xcode may not be selected as the active developer directory:
 
-In the simulator the app runs immediately on **mock data** (seeded to the reference
-screenshots) and a **mock on-device assistant**, so every screen is fully interactive
-without any setup.
+sudo xcode-select -s /Applications/Xcode.app
 
-## Run it on your iPhone (free Apple ID)
+or
 
-iOS has no "drag-and-install" — every install is code-signed through Xcode. A free Apple ID
-works (the app stays valid ~7 days; re-run to refresh).
+DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer xcodebuild ...
 
-1. Open `Ember.xcodeproj` in Xcode.
-2. Select the **Ember** target → **Signing & Capabilities**.
-3. Set **Team** to your Apple ID (use *Add an Account…* if needed).
-4. If `com.ember.health` is taken, change **Bundle Identifier** to something unique
-   (e.g. `com.yourname.ember`).
-5. Plug in your iPhone, trust the Mac, and enable **Developer Mode**
-   (Settings → Privacy & Security → Developer Mode).
-6. Choose your iPhone as the run destination and press **▶ Run**.
-7. First launch only: trust your developer certificate on the phone
-   (Settings → General → VPN & Device Management).
+The simulator runs entirely on mock data, allowing every screen to be explored without HealthKit permissions or AI model setup.
 
-On device, onboarding's **Allow access** step triggers the real HealthKit permission prompt;
-grant read access and the dashboards fill with your own data.
+⸻
 
-## Enabling real on-device Gemma 3n
+Running on a Physical iPhone
 
-The assistant sits behind the `LLMProviding` protocol. `MockGemmaProvider` (keyword-routed,
-simulated streaming) is the default so the app always runs. The real implementation,
-`MediaPipeGemmaProvider`, compiles in automatically when the MediaPipe package is present
-(guarded by `#if canImport(MediaPipeTasksGenAI)`), and
-[`AppEnvironment.makeLLM()`](Ember/App/AppEnvironment.swift) **auto-selects it at launch** as
-soon as a `.task` model is found — no code change needed.
+iOS applications must be code-signed through Xcode before installation.
 
-1. **Add the MediaPipe package** (CocoaPods is the supported iOS path):
-   ```bash
-   brew install cocoapods     # if needed
-   pod install                # uses the included Podfile
-   open Ember.xcworkspace     # from now on open the WORKSPACE, not the .xcodeproj
-   ```
-2. **Get a model into Ember.** You need a quantized **Gemma 3n `.task`** file (multiple GB).
-   iOS apps are sandboxed, so the model must live *inside Ember* — it can't read another app's
-   files. Pick one:
-   - **Files app:** copy the `.task` into *On My iPhone → Ember* (file sharing is enabled), or
-   - **Bundle it:** drag the `.task` into the Xcode project (simplest, but a multi-GB app), or
-   - **Download in-app:** fetch it into the app's `Documents/` on first run.
+1. Open Ember.xcodeproj
+2. Select the Ember target
+3. Navigate to Signing & Capabilities
+4. Set Team to your Apple ID
+5. Change the bundle identifier if required
+6. Connect your iPhone
+7. Enable Developer Mode
+8. Select your device as the run destination
+9. Press Run
 
-   > **About AI Edge Gallery:** it stores its models in *its own* sandbox, which Ember cannot read
-   > directly. Export/share the `.task` out of Gallery and drop it into Ember via the Files app, or
-   > download the `.task` straight from Kaggle / Hugging Face.
+On first launch, Ember will request HealthKit permissions. Once granted, dashboards automatically populate with your own Apple Health data.
 
-3. **Run on a device.** `makeLLM()` finds the `.task` (bundle, `Documents/`, or `Documents/Models/`)
-   and switches to real Gemma. The MediaPipe LLM runtime does **not** run on the iOS simulator.
-   **Never commit the model** — `*.task` is git-ignored.
+⸻
 
-If the build complains after adding the pod, the MediaPipe Swift API shifts between releases —
-adjust the `LlmInference` calls in [`LLMProviding.swift`](Ember/Services/LLMProviding.swift) to
-your installed version. The model status/storage in Settings reflects the real model once loaded.
+Enabling Real On-Device Gemma 3n
 
-## Architecture
+The application uses the LLMProviding abstraction layer.
 
-SwiftUI · iOS 17 · `@Observable` state · protocol-based services with **mock + real**
-implementations, dependency-injected via the SwiftUI environment (mocks in
-simulator/previews, real providers on device).
+Default configuration:
 
-```
+MockGemmaProvider
+
+When MediaPipe is available and a compatible model is detected:
+
+MediaPipeGemmaProvider
+
+is automatically selected.
+
+No source-code modifications are required.
+
+1. Install MediaPipe
+
+brew install cocoapods
+pod install
+open Ember.xcworkspace
+
+After installing CocoaPods, always open:
+
+Ember.xcworkspace
+
+instead of:
+
+Ember.xcodeproj
+
+2. Add a Gemma 3n Model
+
+Obtain a quantized Gemma 3n .task model file.
+
+Supported locations:
+
+* App bundle
+* Documents directory
+* Documents/Models directory
+
+Options include:
+
+* Copying via the Files app
+* Bundling directly into the application
+* Downloading during first launch
+
+Ember cannot access models stored inside other applications’ sandboxes, including AI Edge Gallery.
+
+3. Run on a Physical Device
+
+MediaPipe LLM inference is not supported on the iOS simulator.
+
+When Ember detects a compatible .task model, it automatically switches from the mock provider to the real Gemma implementation.
+
+Model files are excluded from Git:
+
+*.task
+
+⸻
+
+Architecture
+
+SwiftUI · iOS 17 · @Observable state · protocol-based dependency injection
+
+The project supports both mock and real service implementations, enabling full simulator functionality while maintaining production-ready integrations for physical devices.
+
 Ember/
-  App/            EmberApp entry, RootView (onboarding gate → tab shell), AppRouter,
-                  AppEnvironment (provider container), AppChrome (tab bar / privacy banner)
-  DesignSystem/   Theme + AccentTheme (Rouge/Amber/Iris/Mint) + Motion (reduce-motion aware)
-    Components/   Ring, Sparkline, BarChart, Card, GemmaChip, Delta, SectionLabel,
-                  EmberToggle, EmberLogo, EmberIcon (SF Symbol map), Pulses
-  Models/         TodaySnapshot, WeeklyReport, Insight, ChatMessage, ModelStatus,
-                  MetricDetail, enums, and MockData (exact prototype values)
-  Services/       HealthDataProviding  → HealthKitProvider + MockHealthProvider
-                  LLMProviding         → MediaPipeGemmaProvider (#if canImport) + MockGemmaProvider
-                  SpeechTranscribing   → SpeechProvider (Speech framework) + MockSpeechProvider
-                  SettingsStore        → UserDefaults-backed prefs (drives theming)
-  Features/       Onboarding, Today, Weekly, Insights, Ask (chat + voice), Settings, Detail
-  Resources/      Ember.entitlements (HealthKit), Assets.xcassets (AppIcon + AccentColor)
-docs/             HANDOFF.md + design-handoff/ (the source spec, JSX, screenshots)
-scripts/          make_appicon.swift (regenerates the 1024 app icon)
-```
+  App/
+  DesignSystem/
+    Components/
+  Models/
+  Services/
+  Features/
+  Resources/
+docs/
+scripts/
 
-### Theming
+Service Layer
 
-Four accent themes (**Rouge** default, Amber, Iris, Mint), Elevated/Outlined cards, and a
-tunable corner radius — all live, from **Settings → Appearance** (this replaces the
-prototype's browser-only Tweaks panel). "Replay onboarding" lives there too.
+HealthDataProviding
+ ├─ HealthKitProvider
+ └─ MockHealthProvider
+LLMProviding
+ ├─ MediaPipeGemmaProvider
+ └─ MockGemmaProvider
+SpeechTranscribing
+ ├─ SpeechProvider
+ └─ MockSpeechProvider
 
-### Privacy & permissions
+⸻
 
-Read-only HealthKit (`com.apple.developer.healthkit`), plus microphone + speech recognition
-for the voice assistant. Usage strings are set via build settings (`GENERATE_INFOPLIST_FILE`).
-All inference is local by design.
+Theming
 
-## Notes
+Ember includes four built-in accent themes:
 
-- The Xcode project uses a **file-system-synchronized group**, so new files under `Ember/`
-  are picked up automatically — no manual project edits.
-- `make_appicon.swift` regenerates the icon:
-  `swift scripts/make_appicon.swift Ember/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon.png`
-- **Debug-only deep link:** in Debug builds you can boot straight into a screen for testing —
-  `xcrun simctl launch booted com.ember.health -ember.debugTab weekly` (or
-  `-ember.debugDetail hr`). No effect in Release.
+* Rouge (Default)
+* Amber
+* Iris
+* Mint
 
-## Credits
+Users can customize:
 
-Built to a high-fidelity design handoff (see [`docs/`](docs/)). Product name **Ember**;
-some prototype source carries the internal codename "Vesta" — ignore it.
+* Accent color
+* Card style
+* Corner radius
+* Motion preferences
+
+All appearance settings are available from:
+
+Settings → Appearance
+
+⸻
+
+Privacy & Permissions
+
+HealthKit
+
+Used for read-only access to Apple Health data.
+
+Microphone
+
+Used for voice-based interaction.
+
+Speech Recognition
+
+Used for on-device transcription.
+
+AI Inference
+
+All language model inference runs locally on the device.
+
+No health data is transmitted to external servers.
+
+⸻
+
+Notes
+
+File-System-Synchronized Project
+
+New files added under Ember/ are automatically detected by Xcode without manual project edits.
+
+Regenerate App Icon
+
+swift scripts/make_appicon.swift \
+Ember/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon.png
+
+Debug Deep Links
+
+Launch directly into a specific screen:
+
+xcrun simctl launch booted com.ember.health -ember.debugTab weekly
+
+or
+
+xcrun simctl launch booted com.ember.health -ember.debugDetail hr
+
+Available only in Debug builds.
+
+⸻
+
+Roadmap
+
+* Advanced trend forecasting
+* Personalized health goals
+* Health anomaly detection
+* Fine-tuned health-specific Gemma model
+* Apple Watch companion
+* Exportable health reports
+
+⸻
+
+Credits
+
+Built from a high-fidelity design handoff located in docs/.
+
+Product name: Ember
+
+Some prototype assets and source references may still use the internal codename Vesta.
