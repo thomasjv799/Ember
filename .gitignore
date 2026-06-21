@@ -1,0 +1,46 @@
+# ─────────────────────────────────────────────
+# Xcode
+# ─────────────────────────────────────────────
+build/
+DerivedData/
+*.xcuserstate
+*.xcscmblueprint
+*.xccheckout
+xcuserdata/
+
+## Xcode automatically generated files
+*.moved-aside
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+# ─────────────────────────────────────────────
+# Swift Package Manager
+# ─────────────────────────────────────────────
+.swiftpm/
+.build/
+Packages/
+Package.resolved
+
+# ─────────────────────────────────────────────
+# CocoaPods (if added later for MediaPipe)
+# ─────────────────────────────────────────────
+Pods/
+
+# ─────────────────────────────────────────────
+# Gemma 3n model — multi-GB, NEVER commit.
+# Side-loaded / downloaded onto the device instead.
+# ─────────────────────────────────────────────
+*.task
+*.litertlm
+*.bin
+*.tflite
+Ember/Resources/Models/
+
+# ─────────────────────────────────────────────
+# macOS
+# ─────────────────────────────────────────────
+.DS_Store
+.AppleDouble
+.LSOverride

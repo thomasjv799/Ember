@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Ember — Health Monitor</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    background: radial-gradient(120% 120% at 50% 0%, #1b1714 0%, #0a0908 60%);
+    display: flex; align-items: center; justify-content: center;
+    min-height: 100vh; padding: 24px;
+    font-family: -apple-system, system-ui, sans-serif;
+  }
+  #root { transform-origin: center; }
+  .screen { opacity: 1; }
+  @media (prefers-reduced-motion: no-preference) {
+    .screen { animation: fadeUp .35s cubic-bezier(.4,0,.2,1) both; }
+  }
+  @keyframes fadeUp { from { transform: translateY(8px); } to { transform: none; } }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @keyframes pulseDot { 0%,100% { opacity: 1; transform: scale(1); } 50% { opacity: .3; transform: scale(.55); } }
+  @keyframes sheen { 0% { transform: translateX(-160%); } 60%,100% { transform: translateX(260%); } }
+  @keyframes floaty { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+  @keyframes growBar { from { width: 0; } }
+  @keyframes glowPulse {
+    0%,100% { box-shadow: 0 0 0 0 var(--accent-soft), 0 6px 18px -8px var(--accent-soft); }
+    50%     { box-shadow: 0 0 26px 3px var(--accent-soft), 0 10px 28px -6px var(--accent-soft); }
+  }
+  @keyframes flicker { 0%,100% { transform: scale(1) rotate(-3deg); } 50% { transform: scale(1.18) rotate(3deg); } }
+  @keyframes ringspin { to { transform: rotate(360deg); } }
+  .live-dot   { animation: pulseDot 1.6s ease-in-out infinite; }
+  .floaty     { animation: floaty 3.2s ease-in-out infinite; }
+  .grow-bar   { animation: growBar 1.1s cubic-bezier(.4,0,.2,1); }
+  .glow-pulse { animation: glowPulse 2.6s ease-in-out infinite; }
+  .flicker    { animation: flicker 2s ease-in-out infinite; transform-origin: center; }
+  .spin-slow  { animation: ringspin 14s linear infinite; }
+  .sheen-bar {
+    position: absolute; top: 0; bottom: 0; left: 0; width: 45%;
+    background: linear-gradient(100deg, transparent, rgba(255,255,255,.20), transparent);
+    transform: translateX(-160%); animation: sheen 3.4s ease-in-out infinite; pointer-events: none;
+  }
+  /* hide scrollbars inside the phone */
+  ::-webkit-scrollbar { width: 0; height: 0; }
+  * { scrollbar-width: none; }
+  @keyframes waveBar { 0%,100% { height: 8px; } 50% { height: 52px; } }
+  @keyframes typeDot { 0%,100% { opacity: .3; transform: translateY(0); } 50% { opacity: 1; transform: translateY(-3px); } }
+  .wave-bar { animation: waveBar .9s ease-in-out infinite; }
+  .type-dot { animation: typeDot 1s ease-in-out infinite; }
+  button { -webkit-tap-highlight-color: transparent; }
+</style>
+</head>
+<body style="background-color: rgb(103, 55, 55)">
+  <div id="root"></div>
+
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+
+  <script type="text/babel" src="ios-frame.jsx"></script>
+  <script type="text/babel" src="tweaks-panel.jsx"></script>
+  <script type="text/babel" src="components.jsx"></script>
+  <script type="text/babel" src="screens-weekly.jsx"></script>
+  <script type="text/babel" src="screens.jsx"></script>
+  <script type="text/babel" src="chat.jsx"></script>
+  <script type="text/babel" src="onboarding.jsx"></script>
+  <script type="text/babel" src="app.jsx"></script>
+</body>
+</html>
