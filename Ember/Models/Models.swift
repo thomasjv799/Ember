@@ -131,9 +131,9 @@ struct Insight: Identifiable {
 // ─────────────────────────────────────────────────────────────
 // A chat message in the Ask-Gemma thread.
 // ─────────────────────────────────────────────────────────────
-struct ChatMessage: Identifiable {
-    enum Role { case ai, user }
-    let id = UUID()
+struct ChatMessage: Identifiable, Codable, Equatable {
+    enum Role: String, Codable { case ai, user }
+    var id = UUID()
     var role: Role
     var text: String
     var isVoice: Bool = false

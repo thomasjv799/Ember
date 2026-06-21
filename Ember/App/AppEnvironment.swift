@@ -16,6 +16,7 @@ final class AppEnvironment {
 
     @ObservationIgnored private var cachedLLM: LLMProviding?
     @ObservationIgnored private var cachedModelPath: String?
+    @ObservationIgnored private var cachedEngineKey: String?
 
     init(settings: SettingsStore, health: HealthDataProviding,
          speech: SpeechTranscribing, modelManager: ModelManager) {
@@ -43,12 +44,19 @@ final class AppEnvironment {
         return cachedLLM
         #elseif canImport(LiteRTLM)
         guard let path = GemmaModel.installedModelPath() else {
-            cachedLLM = nil; cachedModelPath = nil; return nil
+            cachedLLM = nil; cachedModelPath = nil; cachedEngineKey = nil; return nil
         }
-        if cachedModelPath == path, let cached = cachedLLM { return cached }
-        let provider = LiteRTLMProvider(modelPath: path)
+        let config = settings.inferenceConfig
+        // Reuse the engine while model + engine-level params (backend/maxTokens) are
+        // unchanged; just push live sampler updates. Otherwise rebuild.
+        if cachedModelPath == path, cachedEngineKey == config.engineKey, let cached = cachedLLM {
+            cached.updateSampler(config)
+            return cached
+        }
+        let provider = LiteRTLMProvider(modelPath: path, config: config)
         cachedLLM = provider
         cachedModelPath = path
+        cachedEngineKey = config.engineKey
         return provider
         #else
         return nil

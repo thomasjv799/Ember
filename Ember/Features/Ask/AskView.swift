@@ -38,8 +38,14 @@ struct AskView: View {
         .task {
             today = await env.health.todaySnapshot()
             week = await env.health.weeklyReport()
-            if messages.isEmpty, let llm = env.intelligence() {
-                messages = [ChatMessage(role: .ai, text: llm.greeting(for: env.settings.displayName))]
+            if messages.isEmpty {
+                let saved = ChatStore.load()
+                if !saved.isEmpty {
+                    messages = saved
+                } else if let llm = env.intelligence() {
+                    messages = [ChatMessage(role: .ai, text: llm.greeting(for: env.settings.displayName))]
+                    saveThread()
+                }
             }
         }
         .fullScreenCover(isPresented: $recording) {
@@ -67,6 +73,16 @@ struct AskView: View {
                 }
             }
             Spacer()
+            if env.hasIntelligence && messages.contains(where: { $0.role == .user }) {
+                Button(action: clearConversation) {
+                    Text("Clear")
+                        .font(.ui(13, 600)).foregroundStyle(theme.text2)
+                        .padding(.horizontal, 12).padding(.vertical, 7)
+                        .background(theme.surface, in: Capsule())
+                        .overlay(Capsule().strokeBorder(theme.cardBorder, lineWidth: 1))
+                }
+                .buttonStyle(.plain)
+            }
         }
         .padding(.horizontal, DS.headerH)
         .padding(.top, 8)
@@ -161,6 +177,7 @@ struct AskView: View {
         guard !trimmed.isEmpty else { return }
         draft = ""
         messages.append(ChatMessage(role: .user, text: trimmed, isVoice: voice))
+        saveThread()
         generating = true
 
         replyTask?.cancel()
@@ -180,7 +197,35 @@ struct AskView: View {
                 }
             }
             if !startedReply { generating = false }
+            trimHistory()
+            saveThread()
         }
+    }
+
+    // MARK: Persistence + limit
+
+    /// Keep the displayed thread bounded (the newest exchanges).
+    private let maxMessages = 60
+
+    private func trimHistory() {
+        if messages.count > maxMessages {
+            messages.removeFirst(messages.count - maxMessages)
+        }
+    }
+
+    private func saveThread() { ChatStore.save(messages) }
+
+    private func clearConversation() {
+        replyTask?.cancel()
+        generating = false
+        env.intelligence()?.resetChat()
+        ChatStore.clear()
+        if let llm = env.intelligence() {
+            messages = [ChatMessage(role: .ai, text: llm.greeting(for: env.settings.displayName))]
+        } else {
+            messages = []
+        }
+        saveThread()
     }
 
     // MARK: Voice

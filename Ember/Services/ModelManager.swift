@@ -33,8 +33,9 @@ final class ModelManager: NSObject, URLSessionDownloadDelegate {
     @ObservationIgnored private lazy var session = URLSession(configuration: .default, delegate: self, delegateQueue: nil)
 
     override init() {
-        repo = ud.string(forKey: Keys.repo) ?? ""
-        filename = ud.string(forKey: Keys.filename) ?? ""
+        // Default to the open (apache-2.0, ungated) model the LiteRT-LM guide uses — no token needed.
+        repo = ud.string(forKey: Keys.repo) ?? "litert-community/gemma-4-E2B-it-litert-lm"
+        filename = ud.string(forKey: Keys.filename) ?? "gemma-4-E2B-it.litertlm"
         revision = ud.string(forKey: Keys.revision) ?? "main"
         hfToken = KeychainTokenStore.load() ?? ""
         super.init()

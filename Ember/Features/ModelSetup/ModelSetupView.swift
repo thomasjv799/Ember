@@ -131,8 +131,8 @@ struct ModelSetupView: View {
             Card(pad: 16) {
                 VStack(alignment: .leading, spacing: 12) {
                     SectionLabel("Download from Hugging Face")
-                    field("Access token", text: mm.hfToken, placeholder: "hf_…", secure: true)
-                    Text("Create a read token at huggingface.co/settings/tokens and accept the model's license.")
+                    field("Access token (optional)", text: mm.hfToken, placeholder: "hf_… (not needed for the default model)", secure: true)
+                    Text("The default model is open — no token needed. A token is only required for gated models (e.g. official Gemma repos).")
                         .font(.ui(11.5)).foregroundStyle(theme.text3).lineSpacing(2)
                     field("Repository", text: mm.repo, placeholder: "org/gemma-3n-…-litertlm")
                     field("Filename", text: mm.filename, placeholder: "model.litertlm")

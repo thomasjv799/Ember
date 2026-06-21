@@ -17,9 +17,17 @@ protocol LLMProviding {
     func weeklySummary(context: String) async -> String
     func insights(context: String) async -> [String]
     func reply(to prompt: String, context: String) -> AsyncStream<String>
+
+    /// Reset multi-turn chat memory (new conversation on next reply).
+    func resetChat()
+    /// Apply live sampler params (temperature/topK/topP) to future conversations.
+    func updateSampler(_ config: InferenceConfig)
 }
 
 extension LLMProviding {
+    func resetChat() {}
+    func updateSampler(_ config: InferenceConfig) {}
+
     func greeting(for name: String) -> String {
         "Hi \(name) — I'm running locally on this iPhone. Ask me anything about your health data. Nothing you say leaves the device."
     }

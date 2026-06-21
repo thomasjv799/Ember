@@ -33,6 +33,9 @@ struct SettingsView: View {
 
                 profile
                 modelCard(status, onDevice: $settings.processOnDeviceOnly)
+                inference(backend: $settings.llmBackend,
+                          temperature: $settings.llmTemperature,
+                          maxTokens: $settings.llmMaxTokens)
                 dataSources
                 preferences(dailySuggestions: $settings.dailySuggestions)
                 appearance(radius: $settings.cornerRadius, banner: $settings.privacyBanner)
@@ -148,6 +151,63 @@ struct SettingsView: View {
                 }
             }
             .frame(height: 8)
+        }
+    }
+
+    // MARK: Model & inference
+
+    private func inference(backend: Binding<LLMBackend>, temperature: Binding<Double>, maxTokens: Binding<Int>) -> some View {
+        section("Model & inference") {
+            Card(pad: 16) {
+                VStack(alignment: .leading, spacing: 18) {
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack {
+                            rowLabel("Compute")
+                            Spacer()
+                            Text("GPU recommended").font(.mono(11)).foregroundStyle(theme.text3)
+                        }
+                        HStack(spacing: 8) {
+                            ForEach(LLMBackend.allCases) { option in
+                                let on = backend.wrappedValue == option
+                                Button { backend.wrappedValue = option } label: {
+                                    Text(option.rawValue)
+                                        .font(.ui(13, 600))
+                                        .foregroundStyle(on ? Theme.darkOnAccent : theme.text2)
+                                        .frame(maxWidth: .infinity)
+                                        .padding(.vertical, 8)
+                                        .background(on ? theme.accentColor : .clear, in: Capsule())
+                                        .overlay(Capsule().strokeBorder(on ? .clear : theme.hairStrong, lineWidth: 1))
+                                }.buttonStyle(.plain)
+                            }
+                        }
+                    }
+
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack {
+                            rowLabel("Temperature")
+                            Spacer()
+                            Text(String(format: "%.2f", temperature.wrappedValue)).font(.mono(12)).foregroundStyle(theme.text3)
+                        }
+                        Slider(value: temperature, in: 0...1, step: 0.05).tint(theme.accentColor)
+                        Text("Lower is more focused and factual; higher is more varied (and more likely to make things up).")
+                            .font(.ui(11.5)).foregroundStyle(theme.text3).lineSpacing(2)
+                    }
+
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack {
+                            rowLabel("Max response length")
+                            Spacer()
+                            Text("\(maxTokens.wrappedValue) tokens").font(.mono(12)).foregroundStyle(theme.text3)
+                        }
+                        Slider(value: Binding(get: { Double(maxTokens.wrappedValue) },
+                                              set: { maxTokens.wrappedValue = Int($0) }),
+                               in: 256...4096, step: 256).tint(theme.accentColor)
+                    }
+
+                    Text("Changing Compute or Max length reloads the model on next use. Temperature applies to new chats — tap Clear in Ask to apply it now.")
+                        .font(.ui(11)).foregroundStyle(theme.text3).lineSpacing(2)
+                }
+            }
         }
     }
 

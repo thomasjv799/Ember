@@ -16,6 +16,9 @@ final class SettingsStore {
     var dailySuggestions: Bool { didSet { ud.set(dailySuggestions, forKey: Keys.dailySuggestions) } }
     var processOnDeviceOnly: Bool { didSet { ud.set(processOnDeviceOnly, forKey: Keys.processOnDeviceOnly) } }
     var userName: String { didSet { ud.set(userName, forKey: Keys.userName) } }
+    var llmBackend: LLMBackend { didSet { ud.set(llmBackend.rawValue, forKey: Keys.llmBackend) } }
+    var llmTemperature: Double { didSet { ud.set(llmTemperature, forKey: Keys.llmTemperature) } }
+    var llmMaxTokens: Int { didSet { ud.set(llmMaxTokens, forKey: Keys.llmMaxTokens) } }
 
     @ObservationIgnored private let ud: UserDefaults
 
@@ -29,6 +32,9 @@ final class SettingsStore {
         dailySuggestions = (ud.object(forKey: Keys.dailySuggestions) as? Bool) ?? true
         processOnDeviceOnly = (ud.object(forKey: Keys.processOnDeviceOnly) as? Bool) ?? true
         userName = ud.string(forKey: Keys.userName) ?? ""
+        llmBackend = LLMBackend(rawValue: ud.string(forKey: Keys.llmBackend) ?? "") ?? .gpu
+        llmTemperature = (ud.object(forKey: Keys.llmTemperature) as? Double) ?? 0.4
+        llmMaxTokens = (ud.object(forKey: Keys.llmMaxTokens) as? Int) ?? 1024
     }
 
     /// The resolved theme derived from current preferences.
@@ -49,6 +55,11 @@ final class SettingsStore {
         return result.isEmpty ? "?" : result
     }
 
+    /// Inference parameters for the on-device model.
+    var inferenceConfig: InferenceConfig {
+        InferenceConfig(backend: llmBackend, temperature: llmTemperature, maxTokens: llmMaxTokens)
+    }
+
     func completeOnboarding() { onboarded = true }
     func replayOnboarding() { onboarded = false }
 
@@ -61,5 +72,8 @@ final class SettingsStore {
         static let dailySuggestions = "ember.dailySuggestions"
         static let processOnDeviceOnly = "ember.processOnDeviceOnly"
         static let userName = "ember.userName"
+        static let llmBackend = "ember.llmBackend"
+        static let llmTemperature = "ember.llmTemperature"
+        static let llmMaxTokens = "ember.llmMaxTokens"
     }
 }
